@@ -13,6 +13,7 @@
 #include <QFileInfo>
 #include <QIcon>
 #include <QMimeData>
+#include <QSignalBlocker>
 #include <QStackedWidget>
 #include <QStyleHints>
 #include <QVBoxLayout>
@@ -125,6 +126,7 @@
 #include "DolphinQt/TAS/GCTASInputWindow.h"
 #include "DolphinQt/TAS/WiiTASInputWindow.h"
 #include "DolphinQt/ToolBar.h"
+#include "DolphinQt/WiiTogetherDashboard.h"
 #include "DolphinQt/WiiUpdate.h"
 
 #include "UICommon/DiscordPresence.h"
@@ -326,6 +328,7 @@ MainWindow::MainWindow(Core::System& system, std::unique_ptr<BootParameters> boo
   }
 
   Host::GetInstance()->SetMainWindowHandle(reinterpret_cast<void*>(winId()));
+  UpdateDashboardChrome();
 
   if (m_pending_boot != nullptr)
   {
@@ -456,6 +459,7 @@ void MainWindow::CreateComponents()
   m_game_list = new GameList(this);
   m_render_widget = new RenderWidget;
   m_stack = new QStackedWidget(this);
+  m_wii_together_dashboard = new WiiTogetherDashboard(this);
 
   for (int i = 0; i < 4; i++)
   {
@@ -776,6 +780,43 @@ void MainWindow::ConnectStack()
   connect(&Settings::Instance(), &Settings::GameCountVisibilityChanged, update_spacing);
 
   m_stack->addWidget(widget);
+  m_stack->insertWidget(0, m_wii_together_dashboard);
+  m_stack->setCurrentWidget(m_wii_together_dashboard);
+  m_wii_together_dashboard->SetGameModel(&m_game_list->GetGameListModel());
+  m_connect_phones_dialog = new ConnectPhonesDialog(this);
+  m_wii_together_dashboard->SetServer(m_connect_phones_dialog->Server());
+  auto* home_action = m_menu_bar->addAction(tr("WiiTogether Home"));
+  connect(home_action, &QAction::triggered, this,
+          [this] {
+            if (!m_rendering_to_main)
+              m_stack->setCurrentWidget(m_wii_together_dashboard);
+          });
+  connect(m_stack, &QStackedWidget::currentChanged, this, &MainWindow::UpdateDashboardChrome);
+  connect(&Settings::Instance(), &Settings::EmulationStateChanged, this,
+          [this](Core::State state) {
+            m_wii_together_dashboard->SetLaunchEnabled(state == Core::State::Uninitialized);
+            UpdateDashboardChrome();
+          });
+
+  connect(m_wii_together_dashboard, &WiiTogetherDashboard::ConnectPhonesRequested, this, [this] {
+    if (!m_connect_phones_dialog)
+      m_connect_phones_dialog = new ConnectPhonesDialog(this);
+    m_connect_phones_dialog->show();
+    m_connect_phones_dialog->raise();
+    m_connect_phones_dialog->activateWindow();
+    m_connect_phones_dialog->Start();
+  });
+  connect(m_wii_together_dashboard, &WiiTogetherDashboard::SettingsRequested, this,
+          &MainWindow::ShowSettingsWindow);
+  connect(m_wii_together_dashboard, &WiiTogetherDashboard::LibraryRequested, this,
+          [this] { m_stack->setCurrentIndex(1); });
+  connect(m_wii_together_dashboard, &WiiTogetherDashboard::StartGameRequested, this,
+          [this] {
+            const QString path = m_wii_together_dashboard->SelectedPath();
+            if (!path.isEmpty() && Core::GetState(m_system) == Core::State::Uninitialized)
+              StartGame(path, ScanForSecondDisc::Yes);
+          });
+  connect(m_wii_together_dashboard, &WiiTogetherDashboard::QuitRequested, this, &MainWindow::close);
 
   setCentralWidget(m_stack);
 
@@ -803,6 +844,19 @@ void MainWindow::ConnectStack()
   tabifyDockWidget(m_log_widget, m_network_widget);
   tabifyDockWidget(m_log_widget, m_jit_widget);
   tabifyDockWidget(m_log_widget, m_assembler_widget);
+}
+
+void MainWindow::UpdateDashboardChrome()
+{
+  const bool home = m_stack->currentWidget() == m_wii_together_dashboard &&
+                    Core::GetState(m_system) == Core::State::Uninitialized;
+  m_menu_bar->setVisible(!home);
+  // Hiding the home screen's legacy toolbar is presentation, not a change to
+  // the user's saved toolbar visibility preference.
+  const QSignalBlocker blocker(m_tool_bar);
+  m_tool_bar->setVisible(!home && Settings::Instance().IsToolBarVisible());
+  if (home)
+    setWindowTitle(tr("WiiTogether"));
 }
 
 void MainWindow::RefreshGameList()
@@ -1280,6 +1334,7 @@ void MainWindow::ShowRenderWidget()
   if (Config::Get(Config::MAIN_RENDER_TO_MAIN))
   {
     // If we're rendering to main, add it to the stack and update our title when necessary.
+    m_return_to_dashboard = m_stack->currentWidget() == m_wii_together_dashboard;
     m_rendering_to_main = true;
 
     m_stack->setCurrentIndex(m_stack->addWidget(m_render_widget));
@@ -1306,6 +1361,8 @@ void MainWindow::HideRenderWidget(bool reinit, bool is_exit)
     // Remove the widget from the stack and reparent it to nullptr, so that it can draw
     // itself in a new window if it wants. Disconnect the title updates.
     m_stack->removeWidget(m_render_widget);
+    if (m_return_to_dashboard)
+      m_stack->setCurrentWidget(m_wii_together_dashboard);
     m_render_widget->setParent(nullptr);
     m_rendering_to_main = false;
     m_stack->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);

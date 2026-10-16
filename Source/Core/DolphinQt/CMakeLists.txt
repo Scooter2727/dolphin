@@ -429,6 +429,13 @@ add_executable(dolphin-emu
   TAS/TASSpinBox.h
   TAS/WiiTASInputWindow.cpp
   TAS/WiiTASInputWindow.h
+  WiiTogetherDashboard.cpp
+  WiiTogetherDashboard.h
+  WiiTogetherDashboard.qrc
+  WiiBanner.cpp
+  WiiBanner.h
+  WiiGameOpening.cpp
+  WiiGameOpening.h
   ToolBar.cpp
   ToolBar.h
   Translation.cpp
@@ -485,6 +492,22 @@ if(ENABLE_SDL)
   )
 endif()
 
+# A small compatibility/visual-check utility using the production banner reader
+# and opening screen. Excluded from normal builds and distribution.
+if(ENABLE_TESTS)
+  add_executable(wiitogether-banner-check EXCLUDE_FROM_ALL
+    Tests/WiiBannerCheck.cpp
+    WiiBanner.cpp WiiBanner.h
+    WiiGameOpening.cpp WiiGameOpening.h
+    WiiTogetherDashboard.qrc
+    "${CMAKE_SOURCE_DIR}/Source/UnitTests/StubHost.cpp"
+  )
+  target_link_libraries(wiitogether-banner-check PRIVATE core uicommon Qt6::Widgets Qt6::Svg)
+  if(WIN32)
+    target_link_libraries(wiitogether-banner-check PRIVATE winmm.lib)
+  endif()
+endif()
+
 if (NEED_QT_GUI_PRIVATE_COMPONENT)
   target_link_libraries(dolphin-emu
   PRIVATE
@@ -498,6 +521,7 @@ if (WIN32)
     gdi32.lib
     shell32.lib
     dwmapi.lib # Needed to set window decorations for dark theme
+    winmm.lib # Native channel-banner audio playback
   )
 endif()
 

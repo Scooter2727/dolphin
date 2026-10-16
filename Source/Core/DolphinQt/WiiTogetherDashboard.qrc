@@ -1,0 +1,18 @@
+<RCC>
+  <qresource prefix="/wiitogether">
+    <file alias="header.svg">wiitogether-assets/header-swoop.svg</file>
+    <file alias="logo.svg">wiitogether-assets/wii-logo.svg</file>
+    <file alias="font.ttf">wiitogether-assets/main.ttf</file>
+    <file alias="pointer.png">wiitogether-assets/cursor.png</file>
+    <file alias="background.png">wiitogether-assets/bg.png</file>
+    <file alias="back.png">wiitogether-assets/back.png</file>
+    <file alias="backhover.png">wiitogether-assets/backhover.png</file>
+    <file alias="forward.png">wiitogether-assets/forward.png</file>
+    <file alias="forwardhover.png">wiitogether-assets/forwardhover.png</file>
+    <file alias="covers/RMCE01.png">wiitogether-assets/RMCE01.png</file>
+    <file alias="covers/RMGE01.png">wiitogether-assets/RMGE01.png</file>
+    <file alias="covers/RSBE01.png">wiitogether-assets/RSBE01.png</file>
+    <file alias="covers/RZTE01.png">wiitogether-assets/RZTE01.png</file>
+    <file alias="covers/SUPE01.png">wiitogether-assets/SUPE01.png</file>
+  </qresource>
+</RCC>

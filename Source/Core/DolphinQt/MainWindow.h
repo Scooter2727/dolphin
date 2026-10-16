@@ -55,6 +55,7 @@ class SkylanderPortalWindow;
 class ThreadWidget;
 class ToolBar;
 class WatchWidget;
+class WiiTogetherDashboard;
 class WiiTASInputWindow;
 class WiiSpeakWindow;
 class LogitechMicWindow;
@@ -143,6 +144,7 @@ private:
   void ConnectMenuBar();
   void ConnectRenderWidget();
   void ConnectStack();
+  void UpdateDashboardChrome();
   void ConnectToolBar();
 
   void InitControllers();
@@ -239,6 +241,7 @@ private:
 #endif
 
   QStackedWidget* m_stack;
+  WiiTogetherDashboard* m_wii_together_dashboard = nullptr;
   ToolBar* m_tool_bar;
   ConnectPhonesDialog* m_connect_phones_dialog = nullptr;
   MenuBar* m_menu_bar;
@@ -247,6 +250,7 @@ private:
   GameCount* m_game_count;
   RenderWidget* m_render_widget = nullptr;
   bool m_rendering_to_main;
+  bool m_return_to_dashboard = true;
   bool m_stop_confirm_showing = false;
   bool m_stop_requested = false;
   bool m_exit_requested = false;

@@ -17,6 +17,7 @@ class ConnectPhonesDialog final : public QDialog
 public:
   explicit ConnectPhonesDialog(QWidget* parent);
   void Start();
+  PartyPadProcess* Server() const { return m_server; }
 
 private:
   void Refresh();

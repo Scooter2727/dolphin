@@ -210,9 +210,10 @@ void Host_Message(HostMessageID id)
   }
   else if (id == HostMessageID::WMUserJobDispatch)
   {
-    // Just poke the main thread to get it to wake up, job dispatch
-    // will happen automatically before it goes back to sleep again.
-    QAbstractEventDispatcher::instance(qApp->thread())->wakeUp();
+    // Animated widgets can keep the event loop busy, so dispatch cannot rely
+    // solely on aboutToBlock. Queue it on the host thread, including when the
+    // caller is already on that thread (close handlers must finish first).
+    QueueOnObject(qApp, [] { Core::HostDispatchJobs(Core::System::GetInstance()); });
   }
 }
 
