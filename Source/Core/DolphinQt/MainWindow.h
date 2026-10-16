@@ -28,6 +28,7 @@ class BreakpointWidget;
 struct BootParameters;
 class CheatsManager;
 class CodeWidget;
+class ConnectPhonesDialog;
 class DiscordHandler;
 class DragEnterEvent;
 class FreeLookWindow;
@@ -239,6 +240,7 @@ private:
 
   QStackedWidget* m_stack;
   ToolBar* m_tool_bar;
+  ConnectPhonesDialog* m_connect_phones_dialog = nullptr;
   MenuBar* m_menu_bar;
   SearchBar* m_search_bar;
   GameList* m_game_list;

@@ -305,6 +305,10 @@ add_executable(dolphin-emu
   Main.cpp
   MainWindow.cpp
   MainWindow.h
+  ConnectPhonesDialog.cpp
+  ConnectPhonesDialog.h
+  PartyPadProcess.cpp
+  PartyPadProcess.h
   MenuBar.cpp
   MenuBar.h
   NetPlay/ChunkedProgressDialog.cpp
@@ -468,6 +472,7 @@ target_link_libraries(dolphin-emu
 PRIVATE
   core
   Qt6::Widgets
+  Qt6::Svg
   uicommon
   imgui
   implot

@@ -31,6 +31,7 @@ signals:
 
   void SettingsPressed();
   void ControllersPressed();
+  void ConnectPhonesPressed();
   void GraphicsPressed();
 
   void StepPressed();
@@ -56,6 +57,7 @@ private:
   QAction* m_screenshot_action;
   QAction* m_config_action;
   QAction* m_controllers_action;
+  QAction* m_connect_phones_action;
   QAction* m_graphics_action;
 
   QAction* m_step_action;

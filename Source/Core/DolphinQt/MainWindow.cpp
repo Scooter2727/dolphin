@@ -76,6 +76,7 @@
 #include "DolphinQt/AboutDialog.h"
 #include "DolphinQt/Achievements/AchievementsWindow.h"
 #include "DolphinQt/CheatsManager.h"
+#include "DolphinQt/ConnectPhonesDialog.h"
 #include "DolphinQt/Config/FreeLookWindow.h"
 #include "DolphinQt/Config/LogConfigWidget.h"
 #include "DolphinQt/Config/LogWidget.h"
@@ -696,6 +697,14 @@ void MainWindow::ConnectToolBar()
   connect(m_tool_bar, &ToolBar::ScreenShotPressed, this, &MainWindow::ScreenShot);
   connect(m_tool_bar, &ToolBar::SettingsPressed, this, &MainWindow::ShowSettingsWindow);
   connect(m_tool_bar, &ToolBar::ControllersPressed, this, &MainWindow::ShowControllersWindow);
+  connect(m_tool_bar, &ToolBar::ConnectPhonesPressed, this, [this] {
+    if (!m_connect_phones_dialog)
+      m_connect_phones_dialog = new ConnectPhonesDialog(this);
+    m_connect_phones_dialog->show();
+    m_connect_phones_dialog->raise();
+    m_connect_phones_dialog->activateWindow();
+    m_connect_phones_dialog->Start();
+  });
   connect(m_tool_bar, &ToolBar::GraphicsPressed, this, &MainWindow::ShowGraphicsWindow);
 
   connect(m_tool_bar, &ToolBar::StepPressed, m_code_widget, &CodeWidget::Step);
