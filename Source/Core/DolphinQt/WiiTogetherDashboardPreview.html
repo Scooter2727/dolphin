@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>WiiTogether</title>
+  <link rel="stylesheet" href="WiiTogetherDashboardPreview.css">
+</head>
+<body>
+  <svg class="symbols" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><defs>
+    <symbol id="power" viewBox="0 0 24 24"><path d="M12 3v9M7 5.5a8 8 0 1 0 10 0"/></symbol>
+    <symbol id="settings-icon" viewBox="0 0 24 24"><path d="m10 3-.5 2-2 .9-2-.5-2 3.5L5 10.5v2.8l-1.5 1.6 2 3.5 2-.5 2 .9.5 2.2h4l.5-2.2 2-.9 2 .5 2-3.5-1.5-1.6v-2.8L21 8.9l-2-3.5-2 .5-2-.9-.5-2z"/><circle cx="12" cy="12" r="3.5"/></symbol>
+    <symbol id="remote" viewBox="0 0 28 56"><rect x="6" y="2" width="16" height="51" rx="5"/><path d="M11 12h6m-3-3v6"/><circle cx="14" cy="23" r="3"/><path d="M10 34h8M11 42h6M11 46h6"/></symbol>
+  </defs></svg>
+  <div class="screen" id="dashboard">
+    <header class="topbar">
+      <button class="system-button" id="quit" aria-label="Quit WiiTogether"><svg><use href="#power"/></svg><span>Quit</span></button>
+      <div class="wordmark" aria-label="WiiTogether"><img src="wiitogether-assets/wii-logo.svg" alt="Wii"><span>Together</span></div>
+      <time id="clock" class="header-clock" aria-label="Current time"></time>
+      <button class="system-button" id="settings" aria-label="Open settings"><svg><use href="#settings-icon"/></svg><span>Settings</span></button>
+    </header>
+    <main class="library" aria-label="Game library">
+      <div class="carousel-area">
+        <button class="browse previous" id="previous" aria-label="Previous game"><img src="wiitogether-assets/back.png" alt=""></button>
+        <div class="carousel" id="carousel" aria-label="Browse games"></div>
+        <button class="browse next" id="next" aria-label="Next game"><img src="wiitogether-assets/forward.png" alt=""></button>
+      </div>
+      <div class="selection">
+        <div class="pagination" id="pagination" aria-label="Select a game"></div>
+        <button class="wii-button start" id="start">Start Game</button>
+      </div>
+    </main>
+    <footer class="lobby">
+      <div class="lobby-bar"><span id="lobby-status"><i></i>Connect a phone to play together</span></div>
+      <div class="players" id="players" aria-label="Players"></div>
+      <div class="footer-hint"><span class="a-button small">A</span> Select <span class="hint-divider"></span> Point at a player to connect <span class="preview-label">WiiTogether preview</span></div>
+    </footer>
+  </div>
+  <dialog id="system-dialog" aria-labelledby="dialog-title">
+    <div class="dialog-heading"><h2 id="dialog-title"></h2><button class="close-dialog" aria-label="Close dialog">×</button></div>
+    <div id="dialog-content"></div>
+  </dialog>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <div class="p1-pointer" id="pointer" aria-hidden="true"><img src="wiitogether-assets/cursor.png" alt=""></div>
+  <script src="WiiTogetherDashboardPreview.js"></script>
+</body>
+</html>
